@@ -1,6 +1,9 @@
-
 {
   "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://url-shortener-api-ycp9.onrender.com/:path*"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
