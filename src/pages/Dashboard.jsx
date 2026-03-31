@@ -51,7 +51,7 @@ export default function Dashboard() {
   };
 
   const handleCopy = (short_code) => {
-    navigator.clipboard.writeText(`http://127.0.0.1:8000/${short_code}`);
+    navigator.clipboard.writeText(`${process.env.REACT_APP_API_URL}/${short_code}`);
     setCopied(short_code);
     setTimeout(() => setCopied(''), 2000);
   };
