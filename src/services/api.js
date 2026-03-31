@@ -17,10 +17,10 @@ api.interceptors.request.use((config) => {
 
 // AUTH
 export const register = (email, password) =>
-  api.post('/auth/register', { email, password });
+  api.post('/register', { email, password })
 
 export const login = (email, password) =>
-  api.post('/auth/login', { email, password });
+  api.post('/login', { email, password })
 
 // URLs
 export const shortenUrl = (original_url, custom_alias = null, expires_at = null) =>
