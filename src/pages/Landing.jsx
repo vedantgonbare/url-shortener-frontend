@@ -32,7 +32,7 @@ export default function Landing() {
 };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`http://127.0.0.1:8000/${result.short_code}`);
+    navigator.clipboard.writeText(`${process.env.REACT_APP_API_URL}/${result.short_code}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
