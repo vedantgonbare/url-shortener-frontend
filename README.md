@@ -1,70 +1,181 @@
-# Getting Started with Create React App
+# 🔗 LinkSnap — URL Shortener with Analytics
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> Create short, powerful links with real-time analytics, QR codes, and a beautiful dashboard.
 
-## Available Scripts
+**Live Demo:** [url-shortener-frontend-khaki.vercel.app](https://url-shortener-frontend-khaki.vercel.app)
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## ✨ Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **URL Shortening** — Instantly shorten any long URL with a custom or auto-generated short code
+- **QR Code Generation** — Automatically generate a scannable QR code for every shortened link
+- **Real-time Analytics** — Track clicks, active links, and usage stats from your dashboard
+- **User Authentication** — Secure JWT-based register/login system
+- **Personal Dashboard** — Manage all your links in one place
+- **Copy to Clipboard** — One-click copy for shortened URLs
+- **Redis Caching** — Fast URL redirects powered by Redis cache
+- **Rate Limiting** — API protection with SlowAPI rate limiting
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🛠️ Tech Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Frontend
+| Technology | Purpose |
+|---|---|
+| React.js | UI framework |
+| Axios | HTTP client |
+| React Router | Client-side routing |
+| Vercel | Deployment & hosting |
 
-### `npm run build`
+### Backend
+| Technology | Purpose |
+|---|---|
+| FastAPI | REST API framework |
+| PostgreSQL | Primary database |
+| SQLAlchemy | ORM |
+| Alembic | Database migrations |
+| Redis | Caching layer |
+| JWT (python-jose) | Authentication tokens |
+| bcrypt / passlib | Password hashing |
+| qrcode | QR code generation |
+| Render | Deployment & hosting |
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🏗️ Architecture
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+┌─────────────────┐         ┌─────────────────┐
+│                 │  HTTPS  │                 │
+│  React Frontend │ ──────► │  FastAPI Backend │
+│  (Vercel)       │         │  (Render)        │
+│                 │         │                 │
+└─────────────────┘         └────────┬────────┘
+                                      │
+                          ┌───────────┼───────────┐
+                          │           │           │
+                    ┌─────▼─────┐ ┌───▼───┐  ┌───▼──────┐
+                    │ PostgreSQL│ │ Redis │  │ QR Code  │
+                    │ Database  │ │ Cache │  │ Generator│
+                    └───────────┘ └───────┘  └──────────┘
+```
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🚀 Getting Started
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Prerequisites
+- Python 3.10+
+- Node.js 18+
+- PostgreSQL
+- Redis
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Backend Setup
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+# Clone the repo
+git clone https://github.com/vedantgonbare/url-shortener-api
+cd url-shortener-api
 
-## Learn More
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Install dependencies
+pip install -r requirements.txt
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your DATABASE_URL, SECRET_KEY, REDIS_URL
 
-### Code Splitting
+# Run database migrations
+alembic upgrade head
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+# Start the server
+uvicorn app.main:app --reload
+```
 
-### Analyzing the Bundle Size
+### Frontend Setup
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+# Clone the repo
+git clone https://github.com/vedantgonbare/url-shortener-frontend
+cd url-shortener-frontend
 
-### Making a Progressive Web App
+# Install dependencies
+npm install
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+# Set up environment variables
+echo "REACT_APP_API_URL=http://localhost:8000" > .env
 
-### Advanced Configuration
+# Start the app
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## 📡 API Endpoints
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| POST | `/auth/register` | Register new user | ❌ |
+| POST | `/auth/login` | Login & get JWT token | ❌ |
+| POST | `/shorten` | Shorten a URL | ✅ |
+| GET | `/{short_code}` | Redirect to original URL | ❌ |
+| GET | `/info/{short_code}` | Get URL info | ❌ |
+| GET | `/analytics/{short_code}` | Get click analytics | ✅ |
+| GET | `/dashboard/` | Get user dashboard | ✅ |
 
-### `npm run build` fails to minify
+Full API docs available at: [`/docs`](https://url-shortener-api-ycp9.onrender.com/docs)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## 🌐 Deployment
+
+| Service | Platform | URL |
+|---|---|---|
+| Frontend | Vercel | [url-shortener-frontend-khaki.vercel.app](https://url-shortener-frontend-khaki.vercel.app) |
+| Backend API | Render | [url-shortener-api-ycp9.onrender.com](https://url-shortener-api-ycp9.onrender.com) |
+
+---
+
+## 📸 Screenshots
+
+### Landing Page
+> Clean, modern landing page with instant URL shortening
+
+### Dashboard
+> Personal dashboard showing all links, click stats, and QR codes
+
+---
+
+## 🔒 Environment Variables
+
+### Backend (`.env`)
+```
+DATABASE_URL=postgresql://...
+SECRET_KEY=your-secret-key
+ALGORITHM=HS256
+REDIS_URL=redis://...
+```
+
+### Frontend (`.env`)
+```
+REACT_APP_API_URL=https://url-shortener-api-ycp9.onrender.com
+```
+
+---
+
+## 👨‍💻 Author
+
+**Vedant Gonbare**
+- GitHub: [@vedantgonbare](https://github.com/vedantgonbare)
+- LinkedIn: [linkedin.com/in/vedantgonbare](https://linkedin.com/in/vedantgonbare)
+
+---
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
