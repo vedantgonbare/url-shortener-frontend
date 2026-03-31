@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDashboard, shortenUrl, getQRCode } from '../services/api';
 
@@ -15,7 +15,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const navigate = useNavigate();
 
-  const fetchDashboard = async () => {
+  const fetchDashboard = useCallback(async () => {
     try {
       const res = await getDashboard();
       setData(res.data);
@@ -27,9 +27,9 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  useEffect(() => { fetchDashboard(); }, []);
+  useEffect(() => { fetchDashboard(); }, [fetchDashboard]);
 
   const handleShorten = async (e) => {
     e.preventDefault();
